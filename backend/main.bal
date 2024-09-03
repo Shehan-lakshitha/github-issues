@@ -26,27 +26,28 @@ public function main() returns error? {
 
         //io:println("Issues:" + issues.toString());
         foreach var issue in <json[]>issues {
-            // int number = check issue.number;
-            // string title = (check issue.title).toString();
-            // string state = (check issue.state).toString();
-            // string body = (check issue.body).toString();
-            // string url = (check issue.url).toString();
+            int number = check issue.number;
+            string title = (check issue.title).toString();
+            string state = (check issue.state).toString();
+            string body = (check issue.body).toString();
+            string url = (check issue.url).toString();
 
-            // io:println("Issue:" , number);
-            // io:println("Title:" + title);
-            // io:println("State:" + state);
-            // io:println("Body:" + body);
-            // io:println("URL:" + url);
+            io:println("Issue:" , number);
+            io:println("Title:" + title);
+            io:println("State:" + state);
+            io:println("Body:" + body);
+            io:println("URL:" + url);
+            io:println("-------------------------------------------------");
 
-            IssueInfo issueInfo = {
-                number: check issue.number,
-                title: (check issue.title).toString(),
-                state: (check issue.state).toString(),
-                body: (check issue.body).toString(),
-                url: (check issue.url).toString()
-            };
+            // IssueInfo issueInfo = {
+            //     number: check issue.number,
+            //     title: (check issue.title).toString(),
+            //     state: (check issue.state).toString(),
+            //     body: (check issue.body).toString(),
+            //     url: (check issue.url).toString()
+            // };
 
-            io:println("Issue:" , issueInfo);
+            // io:println("Issue:" , issueInfo);
         }
     } else {
         log:printError("Error: " + response.reasonPhrase);
