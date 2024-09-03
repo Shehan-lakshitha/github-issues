@@ -24,19 +24,40 @@ public function main() returns error? {
     if (response.statusCode == 200) {
         json issues = check response.getJsonPayload();
 
-        io:println("Issues:" + issues.toString());
-        // foreach var issue in <json[]>issues {
-        //     string title = (check issue.title).toString();
-        //     string state = (check issue.state).toString();
-        //     string url = (check issue.url).toString();
+        //io:println("Issues:" + issues.toString());
+        foreach var issue in <json[]>issues {
+            // int number = check issue.number;
+            // string title = (check issue.title).toString();
+            // string state = (check issue.state).toString();
+            // string body = (check issue.body).toString();
+            // string url = (check issue.url).toString();
 
-        //     log:printInfo("Issue Title:" + title);
-        //     log:printInfo("Issue State:" + state);
-        //     log:printInfo("Issue URL:" + url);
-        //     log:printInfo("-------------------------------------------------");
-        // }
+            // io:println("Issue:" , number);
+            // io:println("Title:" + title);
+            // io:println("State:" + state);
+            // io:println("Body:" + body);
+            // io:println("URL:" + url);
+
+            IssueInfo issueInfo = {
+                number: check issue.number,
+                title: (check issue.title).toString(),
+                state: (check issue.state).toString(),
+                body: (check issue.body).toString(),
+                url: (check issue.url).toString()
+            };
+
+            io:println("Issue:" , issueInfo);
+        }
     } else {
         log:printError("Error: " + response.reasonPhrase);
     }
     
 }
+
+type IssueInfo record {|
+    int number;
+    string title;
+    string state;
+    string body;
+    string url;
+|};
