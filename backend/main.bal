@@ -1,13 +1,13 @@
 import ballerina/http;
-import ballerina/log;
 import ballerina/io;
+import ballerina/log;
 
 string githubApiURL = "https://api.github.com";
 
 configurable string acessToken = ?;
 
-http:Client githubClient = check new(githubApiURL, {
-    auth:{
+http:Client githubClient = check new (githubApiURL, {
+    auth: {
         token: acessToken
     }
 });
@@ -32,7 +32,7 @@ public function main() returns error? {
             string body = (check issue.body).toString();
             string url = (check issue.url).toString();
 
-            io:println("Issue:" , number);
+            io:println("Issue:", number);
             io:println("Title:" + title);
             io:println("State:" + state);
             io:println("Body:" + body);
@@ -52,7 +52,7 @@ public function main() returns error? {
     } else {
         log:printError("Error: " + response.reasonPhrase);
     }
-    
+
 }
 
 type IssueInfo record {|
