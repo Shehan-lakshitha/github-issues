@@ -1,13 +1,48 @@
-import React from "react";
+import React, { useState } from "react";
 import { Input, Button } from "antd";
-import { UserOutlined, UngroupOutlined, GithubOutlined } from "@ant-design/icons";
+import {
+  UserOutlined,
+  UngroupOutlined,
+  GithubOutlined,
+} from "@ant-design/icons";
 
 const Home = () => {
+  const [issues, setIssues] = useState([]);
+  const [owner, setOwner] = useState("");
+  const [repo, setRepo] = useState("");
+  const [search, setSearch] = useState(false);
+
+  const handleSubmit = () => {
+    setOwner(document.getElementById("ownerInput").value);
+    setRepo(document.getElementById("repoInput").value);
+    dataFetch();
+  };
+
+  const dataFetch = async () => {
+    try {
+      const reponse = await fetch(
+        `http://localhost:9090/issues?owner=${owner}&repo=${repo}`
+      );
+
+      if (!reponse.ok) {
+        throw new Error("HTTP error, status = " + reponse.status);
+      }
+
+      setSearch(true);
+
+      const data = await reponse.json();
+      setIssues(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       <div className="flex items-center">
         <Input
           className="w-[200px] h-[30px] mr-3 text-sm"
+          id="ownerInput"
           size="small"
           placeholder="Owner"
           prefix={
@@ -20,50 +55,68 @@ const Home = () => {
         />
         <Input
           className="w-[200px] h-[30px] mr-3"
+          id="repoInput"
           size="small"
           placeholder="Repo"
           prefix={
             <UngroupOutlined
               style={{
                 fontSize: "24px",
-                //color: "#eb2f96"
               }}
             />
           }
         />
-        <Button className="h-[30px]" type="primary">
+        <Button className="h-[30px]" type="primary" onClick={handleSubmit}>
           Track issues
         </Button>
       </div>
-      <div>
-        <div className="flex items-center border-b-[1px]">
-          <h1 className="text-lg text-gray-400 ">Issues - </h1>
-          <p className="text-sm ">@Shehan-lakshitha/Track-My-Issue</p>
-        </div>
+      {search ? (
+        <div>
+          <div className="flex items-center border-b-[1px]">
+            <h1 className="text-lg text-gray-400 ">Issues - </h1>
+            <p className="text-sm ">
+              @{owner}/{repo}
+            </p>
+          </div>
 
-        <div className="mt-2 rounded-md border-[1px]">
-          <div className="flex justify-between">
-            <p className="text-md text-gray-400">
-              #152 - Enhance the user interface
-            </p>
-            {/* <span className="text-sm text-[#ef2494] bg-red-300 rounded-md w-13 h-6 flex items-center text-center">
-              Closed
-            </span> */}
-            <span className="text-sm text-[#52c41a] bg-green-300 rounded-md w-13 h-6 flex items-center text-center">
-              Open
-            </span>
-            
-          </div>
-          <div className="flex justify-between items-center">
-            <p className="text-sm">
-              In the project enhancing the user interface would be a great
-              advantage
-            </p>
-            <a className="text-sm flex items-center text-center rounded-md border-[1px] h-8" href=""><GithubOutlined className="text-2xl" />View on GitHub</a>
-          </div>
+          {issues.map((issue, index) => (
+            <div key={index} className="mt-2 rounded-md border-[1px] shadow-md">
+              <div className="flex justify-between">
+                <p className="text-md text-gray-400">
+                  #{issue.number} - {issue.title}
+                </p>
+                {issue.state == "closed" ? (
+                  <span className="text-sm text-[#ef2494] bg-red-300 rounded-md w-13 h-6 flex items-center text-center">
+                    Closed
+                  </span>
+                ) : (
+                  <span className="text-sm text-[#52c41a] bg-green-300 rounded-md w-13 h-6 flex items-center text-center">
+                    Open
+                  </span>
+                )}
+              </div>
+              <div className="flex justify-between items-end">
+                <p className="text-sm flex-1 overflow-hidden text-ellipsis">
+                  {issue.body}
+                </p>
+                <a
+                  className="text-sm flex-shrink-0 flex items-center text-center rounded-md border-[1px] h-8 px-2"
+                  href={issue.url}
+                >
+                  <GithubOutlined className="text-2xl" />
+                  <span className="ml-1">View on GitHub</span>
+                </a>
+              </div>
+            </div>
+          ))}
         </div>
-        
-      </div>
+      ) : (
+        <div className="mt-4 flex justify-center">
+          <h1 className="text-sm text-gray-400">
+            Enter the owner and the repo name to track the issues
+          </h1>
+        </div>
+      )}
     </>
   );
 };
