@@ -24,7 +24,7 @@ public function main() returns error? {
     if (response.statusCode == 200) {
         json issues = check response.getJsonPayload();
 
-        //io:println("Issues:" + issues.toString());
+        io:println("Issues:" + issues.toString());
         foreach var issue in <json[]>issues {
             int number = check issue.number;
             string title = (check issue.title).toString();
