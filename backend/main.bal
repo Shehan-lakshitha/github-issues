@@ -1,6 +1,4 @@
 import ballerina/http;
-import ballerina/io;
-import ballerina/log;
 
 string githubApiURL = "https://api.github.com";
 
@@ -15,45 +13,40 @@ http:Client githubClient = check new (githubApiURL, {
 configurable string owner = ?;
 configurable string repo = ?;
 
-public function main() returns error? {
+service on new http:Listener(9090) {
 
-    string endpoint = "/repos/" + owner + "/" + repo + "/issues";
+    resource function get issues(http:Caller caller) returns error? {
 
-    http:Response response = check githubClient->get(endpoint);
+        string endpoint = "/repos/" + owner + "/" + repo + "/issues";
 
-    if (response.statusCode == 200) {
-        json issues = check response.getJsonPayload();
+        http:Response response = check githubClient->get(endpoint);
 
-        io:println("Issues:" + issues.toString());
-        foreach var issue in <json[]>issues {
-            int number = check issue.number;
-            string title = (check issue.title).toString();
-            string state = (check issue.state).toString();
-            string body = (check issue.body).toString();
-            string url = (check issue.url).toString();
+        if (response.statusCode == 200) {
+            json issues = check response.getJsonPayload();
 
-            io:println("Issue:", number);
-            io:println("Title:" + title);
-            io:println("State:" + state);
-            io:println("Body:" + body);
-            io:println("URL:" + url);
-            io:println("-------------------------------------------------");
 
-            // IssueInfo issueInfo = {
-            //     number: check issue.number,
-            //     title: (check issue.title).toString(),
-            //     state: (check issue.state).toString(),
-            //     body: (check issue.body).toString(),
-            //     url: (check issue.url).toString()
-            // };
+            IssueInfo[] issueInfos = [];
+            foreach var issue in <json[]>issues {
 
-            // io:println("Issue:" , issueInfo);
+                IssueInfo issueInfo = {
+                    number: check issue.number,
+                    title: (check issue.title).toString(),
+                    state: (check issue.state).toString(),
+                    body: (check issue.body).toString(),
+                    url: (check issue.url).toString()
+                };
+
+                issueInfos.push(issueInfo);
+
+            }
+
+            check caller->respond(issueInfos);
         }
-    } else {
-        log:printError("Error: " + response.reasonPhrase);
     }
 
 }
+
+
 
 type IssueInfo record {|
     int number;
