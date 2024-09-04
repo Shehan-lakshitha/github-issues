@@ -10,12 +10,21 @@ http:Client githubClient = check new (githubApiURL, {
     }
 });
 
-configurable string owner = ?;
-configurable string repo = ?;
+// configurable string owner = ?;
+// configurable string repo = ?;
 
 service on new http:Listener(9090) {
 
-    resource function get issues(http:Caller caller) returns error? {
+    resource function get issues(http:Caller caller, http:Request request) returns error? {
+
+        string owner = request.getQueryParamValue("owner") ?: "";
+        string repo = request.getQueryParamValue("repo") ?: "";
+
+        if (owner == "" || repo == "") {
+            check caller->respond("owner and repo query parameters are required");
+            return;
+
+        }
 
         string endpoint = "/repos/" + owner + "/" + repo + "/issues";
 
@@ -23,7 +32,6 @@ service on new http:Listener(9090) {
 
         if (response.statusCode == 200) {
             json issues = check response.getJsonPayload();
-
 
             IssueInfo[] issueInfos = [];
             foreach var issue in <json[]>issues {
@@ -45,8 +53,6 @@ service on new http:Listener(9090) {
     }
 
 }
-
-
 
 type IssueInfo record {|
     int number;
