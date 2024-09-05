@@ -18,6 +18,7 @@ http:Client githubClient = check new (githubApiURL, {
     }
 }
 
+
 service on new http:Listener(9090) {
 
     resource function get issues(http:Caller caller, http:Request request) returns error? {
@@ -30,7 +31,7 @@ service on new http:Listener(9090) {
             return;
         }
 
-        string endpoint = "/repos/" + owner + "/" + repo + "/issues";
+        string endpoint = "/repos/" + owner + "/" + repo + "/issues?state=all";
 
         http:Response response = check githubClient->get(endpoint);
 
@@ -45,7 +46,7 @@ service on new http:Listener(9090) {
                     title: (check issue.title).toString(),
                     state: (check issue.state).toString(),
                     body: (check issue.body).toString(),
-                    url: (check issue.url).toString()
+                    url: (check issue.html_url).toString()
                 };
 
                 issueInfos.push(issueInfo);

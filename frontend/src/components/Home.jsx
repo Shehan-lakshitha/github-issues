@@ -114,6 +114,7 @@ const Home = () => {
                 <a
                   className="text-sm flex-shrink-0 flex items-center text-center rounded-md border-[1px] h-8 px-2"
                   href={issue.url}
+                  target="_blank"
                 >
                   <GithubOutlined className="text-2xl" />
                   <span className="ml-1">View on GitHub</span>

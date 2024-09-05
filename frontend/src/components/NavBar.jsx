@@ -21,7 +21,6 @@ const NavBar = () => {
     dataFetch();
   },[]);
 
-  console.log(userInfo);
   return (
     <>
       <div className="flex justify-between items-center">
