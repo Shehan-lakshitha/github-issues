@@ -62,6 +62,27 @@ service on new http:Listener(9090) {
         }
     }
 
+    resource function get userInfo(http:Caller caller) returns error? {
+        string endpoint = "/user";
+
+        http:Response|http:ClientError response = githubClient->get(endpoint);
+
+        
+        if (response is http:Response) {
+            json user = check response.getJsonPayload();
+
+            UserInfo userInfo = {
+                username: (check user.login).toString(),
+                avatarUrl: (check user.avatar_url).toString()
+            };
+
+            check caller->respond(userInfo);
+        } else {
+            check caller->respond("Error occurred while getting user info");
+        }
+
+    }
+
 }
 
 type IssueInfo record {|
@@ -70,4 +91,9 @@ type IssueInfo record {|
     string state;
     string body;
     string url;
+|};
+
+type UserInfo record {|
+    string username;
+    string avatarUrl;
 |};

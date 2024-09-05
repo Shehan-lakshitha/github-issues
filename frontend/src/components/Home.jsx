@@ -108,7 +108,7 @@ const Home = () => {
               </div>
               <div className="flex justify-between items-end">
                 <p
-                  className="text-sm flex-1 overflow-hidden -mt-8 text-ellipsis"
+                  className="text-sm flex-1 overflow-hidden -mt-6 text-ellipsis"
                   dangerouslySetInnerHTML={{ __html: editText(issue.body) }}
                 />
                 <a
