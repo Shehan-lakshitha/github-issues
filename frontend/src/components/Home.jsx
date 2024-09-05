@@ -43,7 +43,7 @@ const Home = () => {
     var link = /\[(.*?)\]\((.*?)\)/gm;
     var result = text.replace(bold, "<br><b>$1</b><br>");
     result = result.replace(italic, "<i>$1</i>");
-    result = result.replace(code, "<code><br>$1</code>");
+    result = result.replace(code, "<code><br>$1</code><br>");
     result = result.replace(link, '<a href="$2">$1</a>');
     return result;
   };

@@ -4,24 +4,19 @@ string githubApiURL = "https://api.github.com";
 
 configurable string acessToken = ?;
 
-
-
 http:Client githubClient = check new (githubApiURL, {
     auth: {
         token: acessToken
     }
 });
 
-@http:ServiceConfig{
+@http:ServiceConfig {
     cors: {
         allowOrigins: ["http://localhost:5173"],
         allowMethods: ["GET", "POST", "PUT", "DELETE"],
         allowHeaders: ["Authorization", "Content-Type"]
     }
 }
-
-// configurable string owner = ?;
-// configurable string repo = ?;
 
 service on new http:Listener(9090) {
 
@@ -31,9 +26,8 @@ service on new http:Listener(9090) {
         string repo = request.getQueryParamValue("repo") ?: "";
 
         if (owner == "" || repo == "") {
-            check caller->respond("owner and repo query parameters are required");
+            check caller->respond("owner and repository details are required");
             return;
-
         }
 
         string endpoint = "/repos/" + owner + "/" + repo + "/issues";
@@ -67,7 +61,6 @@ service on new http:Listener(9090) {
 
         http:Response|http:ClientError response = githubClient->get(endpoint);
 
-        
         if (response is http:Response) {
             json user = check response.getJsonPayload();
 
