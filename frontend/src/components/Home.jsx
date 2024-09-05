@@ -36,6 +36,17 @@ const Home = () => {
       console.log(error);
     }
   };
+  const editText = (text) => {
+    var bold = /\*\*(.*?)\*\*/gm;
+    var italic = /\*(.*?)\*/gm;
+    var code = /`([^`]*)`/gm;
+    var link = /\[(.*?)\]\((.*?)\)/gm;
+    var result = text.replace(bold, "<br><b>$1</b><br>");
+    result = result.replace(italic, "<i>$1</i>");
+    result = result.replace(code, "<code><br>$1</code>");
+    result = result.replace(link, '<a href="$2">$1</a>');
+    return result;
+  };
 
   return (
     <>
@@ -96,9 +107,10 @@ const Home = () => {
                 )}
               </div>
               <div className="flex justify-between items-end">
-                <p className="text-sm flex-1 overflow-hidden text-ellipsis">
-                  {issue.body}
-                </p>
+                <p
+                  className="text-sm flex-1 overflow-hidden -mt-8 text-ellipsis"
+                  dangerouslySetInnerHTML={{ __html: editText(issue.body) }}
+                />
                 <a
                   className="text-sm flex-shrink-0 flex items-center text-center rounded-md border-[1px] h-8 px-2"
                   href={issue.url}
